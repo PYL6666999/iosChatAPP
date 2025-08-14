@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class RegisterViewController: UIViewController {
 
@@ -103,14 +104,14 @@ class RegisterViewController: UIViewController {
         title = "Register"
         view.backgroundColor = .white
         
-//        navigationItem.rightBarButtonItem = UIBarButtonItem.init(title: "Register",
-//                                                                 style: .done,
-//                                                                 target: self,
-//                                                                 action: #selector(didTapRegister))
-//        
-//        registerButton.addTarget(self,
-//                              action: #selector(registerButtonTapped),
-//                              for: .touchUpInside)
+        navigationItem.rightBarButtonItem = UIBarButtonItem.init(title: "Register",
+                                                                 style: .done,
+                                                                 target: self,
+                                                                 action: #selector(didTapRegister))
+        
+        registerButton.addTarget(self,
+                              action: #selector(registerButtonTapped),
+                              for: .touchUpInside)
         
         emailField.delegate = self
         passwordField.delegate = self
@@ -189,6 +190,19 @@ class RegisterViewController: UIViewController {
             alertUserLoginError()
             return
         }
+        
+        // Firebase Log In
+        
+        FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password, completion: { authResult, error in
+            
+            guard let result = authResult, error == nil else {
+                print("Error cureating user")
+                return
+            }
+                
+            let user = result.user
+            print("Created User: \(user)")
+        })
     }
     func alertUserLoginError() {
         let alert = UIAlertController(title: "Woops", message: "Please enter all information to create a new account",preferredStyle: .alert)
